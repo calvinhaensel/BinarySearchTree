@@ -3,7 +3,7 @@ class Node:
         self.value=value
         self.left_child=None
         self.right_child=None
-        self.parent=None # pointer to parent node in tree
+        self.parent=None
 
 class binary_search_tree:
     def __init__(self):
@@ -21,13 +21,13 @@ class binary_search_tree:
         if value<cur_node.value:
             if cur_node.left_child==None:
                 cur_node.left_child=node(value)
-                cur_node.left_child.parent=cur_node # set parent
+                cur_node.left_child.parent=cur_node
             else:
                 self._insert(value,cur_node.left_child)
         elif value>cur_node.value:
             if cur_node.right_child==None:
                 cur_node.right_child=node(value)
-                cur_node.right_child.parent=cur_node # set parent
+                cur_node.right_child.parent=cur_node
             else:
                 self._insert(value,cur_node.right_child)
         else:
@@ -81,8 +81,7 @@ def inorder(root):
         #then add the data of node
         inlist.append(root.val)
         #recur on right child
-        inorder(root.right)
- 
+        inorder(root.right) 
  
  
 def postorder(root):
@@ -98,7 +97,7 @@ def postorder(root):
 def preorder(root):
     prelist = []
     if root:
-        # First print the data of node
+        # First append node data
         prelist.append(root.val),
         # Then recur on left child
         preorder(root.left)
