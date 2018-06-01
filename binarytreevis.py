@@ -1,13 +1,33 @@
+
 class Node:
     def __init__(self,value=None):
         self.value=value
         self.left=None
         self.right=None
         self.parent=None
+	
+    def __iter__(self):
+        if self.left != None:
+            for elem in self.left:
+                yield elem
+		
+        yield self.value
+	
+        if self.right != None:
+            for elem in self.right:
+                yield elem    
 
 class BinarySearchTree:
     def __init__(self, contents = []):
         self.root=None
+        for item in contents:
+            self.insert(item)
+	    
+    def __iter__(self):
+        if self.root != None:
+            return iter(self.root)
+        else:
+            return iter([])    
 
 
     def insert(self,value):
@@ -15,6 +35,7 @@ class BinarySearchTree:
             self.root=Node(value)
         else:
             self._insert(value,self.root)
+        return self
 
 
     def _insert(self, value, cur_node):
@@ -117,37 +138,73 @@ class BinarySearchTree:
 
     def inorder(self):
         root = self.root
-        inlist = []
-        if root:
-	    #First recur on left child
-            self.inorder(root.left)
-	    #then add the data of node
-            inlist.append(root.value)
-	    #recur on right child
-            self.inorder(root.right) 
+        inlist, curr = [], root
+        while curr:
+            if curr.left is None:
+                inlist.append(curr.value)
+                curr = curr.right
+            else:
+                node = curr.left
+                while node.right and node.right != curr:
+                    node = node.right
+                if node.right is None:
+                    node.right = curr
+                    curr = curr.left
+                else:
+                    inlist.append(curr.value)
+                    node.right = None
+                    curr = curr.right
         return inlist
      
      
     def postorder(self):
-        root = self.root
-        postlist = []
-        if root:
-	    # First recur on left child
-            self.postorder(root.left)
-	    # the recur on right child
-            self.postorder(root.right) 
-            postlist.append(root.value)
+        postlist,root = [], self.root
+        self._postorder(root, postlist)
         return postlist
+    #Added a helper function to do the required recursion
+    def _postorder(self, node, plist):
+        if node == None:
+            return
+        self._postorder(node.left, plist)
+        self._postorder(node.right, plist)
+        plist.append(node.value)
+        
      
      
     def preorder(self):
         root = self.root
-        prelist = []
-        if root:
-	    # First append node data
-            prelist.append(root.value),
-	    # Then recur on left child
-            self.preorder(root.left)
-	    # Finally recur on right child
-            self.preorder(root.right)
+        if not root:
+            return []
+        prelist,curr = [],root
+        while curr:
+            if curr.left is None:
+                prelist.append(curr.value)
+                curr = curr.right
+            else:
+                node = curr.left
+                while node.right and node.right != curr:
+                    node = node.right 
+                if node.right is None:
+                    prelist.append(curr.value)
+                    node.right = curr
+                    curr = curr.left
+                else:
+                    node.right = None
+                    curr = curr.right            
         return prelist
+    
+    def levelorder(self):
+        root = self.root
+        if root is None:
+            return []
+        levellist, current = [], [root]
+        while current:
+            next_level = []
+            for node in current:
+                levellist.append(node.value)
+                if node.left:
+                    next_level.append(node.left)
+                if node.right:
+                    next_level.append(node.right)
+            current = next_level
+        return levellist    
