@@ -16,6 +16,7 @@ class Node:
         if self.right != None:
             for elem in self.right:
                 yield elem    
+     
 
 class BinarySearchTree:
     def __init__(self, contents = []):
@@ -63,10 +64,10 @@ class BinarySearchTree:
     def _find(self,value,cur_node):
         if value==cur_node.value:
             return cur_node
-        elif value<cur_node.value and cur_node.left_child!=None:
-            return self._find(value,cur_node.left_child)
-        elif value>cur_node.value and cur_node.right_child!=None:
-            return self._find(value,cur_node.right_child)
+        elif value<cur_node.value and cur_node.left!=None:
+            return self._find(value,cur_node.left)
+        elif value>cur_node.value and cur_node.right!=None:
+            return self._find(value,cur_node.right)
 
 
     def delete(self,value):
@@ -115,10 +116,10 @@ class BinarySearchTree:
             child.parent = node_parent
 	#Case 3
         if node_children == 2:
-            new = min_value_node(node.right_child)
+            new = min_value_node(node.right)
             node.value = new.value
-            self.delete_node(new)
-	    
+            self.delete_node(new)        
+
     def contains(self, value):
         if self.root != None:
             return self._contains(value, self.root)
@@ -137,24 +138,17 @@ class BinarySearchTree:
 	
 
     def inorder(self):
-        root = self.root
-        inlist, curr = [], root
-        while curr:
-            if curr.left is None:
-                inlist.append(curr.value)
-                curr = curr.right
-            else:
-                node = curr.left
-                while node.right and node.right != curr:
-                    node = node.right
-                if node.right is None:
-                    node.right = curr
-                    curr = curr.left
-                else:
-                    inlist.append(curr.value)
-                    node.right = None
-                    curr = curr.right
+        inlist,root = [], self.root
+        self._inorder(root, inlist)
         return inlist
+    #Added a helper function to do the required recursion
+    def _inorder(self, node, ilist):
+        if node == None:
+            return
+        self._inorder(node.left, ilist)
+        ilist.append(node.value)
+        self._inorder(node.right, ilist)
+	
      
      
     def postorder(self):
@@ -170,28 +164,18 @@ class BinarySearchTree:
         plist.append(node.value)
         
      
-     
     def preorder(self):
-        root = self.root
-        if not root:
-            return []
-        prelist,curr = [],root
-        while curr:
-            if curr.left is None:
-                prelist.append(curr.value)
-                curr = curr.right
-            else:
-                node = curr.left
-                while node.right and node.right != curr:
-                    node = node.right 
-                if node.right is None:
-                    prelist.append(curr.value)
-                    node.right = curr
-                    curr = curr.left
-                else:
-                    node.right = None
-                    curr = curr.right            
+        prelist,root = [], self.root
+        self._preorder(root, prelist)
         return prelist
+    #Added a helper function to do the required recursion
+    def _preorder(self, node, plist):
+        if node == None:
+            return
+        plist.append(node.value)
+        self._preorder(node.left, plist)
+        self._preorder(node.right, plist)
+  	
     
     def levelorder(self):
         root = self.root
